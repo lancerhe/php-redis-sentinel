@@ -1,0 +1,17 @@
+{
+    "name": "lancerhe/php-redis-sentinel",
+    "description": "php library redis sentinel.",
+    "authors": [
+        {
+            "name": "Lancer He",
+            "email": "lancer.he@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-0": {
+            "RedisSentinel": "src"
+        }
+    }
+}
