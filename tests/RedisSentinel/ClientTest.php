@@ -15,7 +15,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
     /**
      * @test
      */
-    public function connectFailure() {
+    public function connect_failure() {
         $this->setExpectedException('RedisSentinel\ConnectionTcpExecption');
         $sentinel_client = new Client("127.0.0.1", 26379);
         $sentinel_client->masters();

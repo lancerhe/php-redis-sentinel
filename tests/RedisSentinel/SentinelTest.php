@@ -17,7 +17,7 @@ class SentinelTest extends \PHPUnit_Framework_TestCase {
     /**
      * @test
      */
-    public function connectAllSentinelClientFailure() {
+    public function connect_failure_while_all_clients_connect_failure() {
         $this->setExpectedException('RedisSentinel\ConnectionFailureExecption');
 
         $stub_client_1 = $this->getMockBuilder('RedisSentinel\Client')->disableOriginalConstructor()->getMock();
@@ -31,6 +31,7 @@ class SentinelTest extends \PHPUnit_Framework_TestCase {
             ->will($this->throwException(new ConnectionTcpExecption));
 
         $sentinel = new Sentinel('my_name');
+        $sentinel->setOutputFile('/tmp/phpunit');
         $sentinel->add($stub_client_1);
         $sentinel->add($stub_client_2);
         $sentinel->getMaster();
@@ -39,7 +40,7 @@ class SentinelTest extends \PHPUnit_Framework_TestCase {
     /**
      * @test
      */
-    public function connectSuccess() {
+    public function connect_success() {
         $stub_client_1 = $this->getMockBuilder('RedisSentinel\Client')->disableOriginalConstructor()->getMock();
         $stub_client_1->expects($this->any())
             ->method('masters')
@@ -60,6 +61,7 @@ class SentinelTest extends \PHPUnit_Framework_TestCase {
             ]);
 
         $sentinel = new Sentinel('my_redis');
+        $sentinel->setOutputFile('/tmp/phpunit');
         $sentinel->add($stub_client_1);
         $sentinel->add($stub_client_2);
 
@@ -67,5 +69,10 @@ class SentinelTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('192.168.1.7', $sentinel->getSlaves()[0]['host']);
         $this->assertEquals('192.168.1.8', $sentinel->getSlaves()[1]['host']);
         $this->assertTrue( in_array( $sentinel->getSlave()['host'], ['192.168.1.7', '192.168.1.8'] ) );
+    }
+
+    public function tearDown() {
+        if ( file_exists('/tmp/phpunit') ) 
+            unlink("/tmp/phpunit");
     }
 }

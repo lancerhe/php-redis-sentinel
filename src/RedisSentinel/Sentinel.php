@@ -21,16 +21,15 @@ class Sentinel {
      */
     protected static $_connected = false;
 
+    protected $_output_file = '/tmp/sentinel.log';
+
     protected $_master_name = '';
 
-    protected $_master = [];
+    protected $_master = array();
 
-    protected $_slaves = [];
+    protected $_slaves = array();
 
-    /**
-     * Client
-     */
-    protected $_Clients = [];
+    protected $_Clients = array();
 
     /**
      * 初始化需要连接的Master
@@ -60,9 +59,13 @@ class Sentinel {
         throw new ConnectionFailureExecption();
     }
 
+    public function setOutputFile($output_file) {
+        $this->_output_file = $output_file;
+    }
+
     protected function _writeOutputException($Client, $e) {
         $output = "[". date('Y-m-d H:i:s'). "] " . $Client->getHost() . ":" . $Client->getPort() . " " . $e->getMessage() . PHP_EOL;
-        file_put_contents("/tmp/redis_sentinel_exception.log", $output, FILE_APPEND);
+        file_put_contents($this->_output_file, $output, FILE_APPEND);
     }
 
     public function add($Client) {
@@ -71,7 +74,7 @@ class Sentinel {
 
     public function getMaster() {
         $this->_connect();
-        $masters = [];
+        $masters = array();
         foreach ($this->_masters as $master) {
             $masters[$master['name']] = $master;
         }
@@ -80,7 +83,7 @@ class Sentinel {
 
     public function getSlaves() {
         $this->_connect();
-        $slaves = [];
+        $slaves = array();
         foreach($this->_slaves as $slave) 
             if($slave['flags'] == 'slave') $slaves[] = $slave;
         return $slaves;
